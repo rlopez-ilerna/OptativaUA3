@@ -9,7 +9,7 @@ jobs:
   test:
     name: Build & Test
     runs-on: ubuntu-latest
-    
+
     defaults:
       run:
         working-directory: todo-java
@@ -39,6 +39,22 @@ jobs:
           find src/test/java -name "*.java" > test-sources.txt
           javac -cp "lib/*:out/main" -d out/test @test-sources.txt
 
+      - name: Arrancar servidor en background
+        run: |
+          java -cp "lib/*:out/main" Main > server.log 2>&1 &
+          echo $! > server.pid
+
+      - name: Esperar a que el servidor esté listo (puerto 8080)
+        run: |
+          for i in {1..15}; do
+            nc -z localhost 8080 && echo "Servidor listo" && exit 0
+            echo "Esperando servidor..."
+            sleep 2
+          done
+          echo "El servidor no arrancó a tiempo"
+          cat server.log
+          exit 1
+
       - name: Ejecutar tests
         run: |
           java -jar lib/junit-platform-console-standalone-1.10.3.jar \
@@ -46,3 +62,6 @@ jobs:
             --scan-class-path \
             --fail-if-no-tests
 
+      - name: Mostrar log del servidor si falla
+        if: failure()
+        run: cat server.log
