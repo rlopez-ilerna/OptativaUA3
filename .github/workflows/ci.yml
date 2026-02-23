@@ -10,6 +10,10 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: todo-java
+        
     services:
       postgres:
         image: postgres:15
