@@ -9,10 +9,29 @@ jobs:
   test:
     name: Build & Test
     runs-on: ubuntu-latest
-    
-    defaults:
-      run:
-        working-directory: todo-java
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: todo_user
+          POSTGRES_PASSWORD: todo_pass
+          POSTGRES_DB: todo_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: todo_db
+      DB_USER: todo_user
+      DB_PASSWORD: todo_pass
+      PORT: 8080
 
     steps:
       - name: Checkout código
@@ -39,6 +58,24 @@ jobs:
           find src/test/java -name "*.java" > test-sources.txt
           javac -cp "lib/*:out/main" -d out/test @test-sources.txt
 
+      - name: Arrancar la app en background
+        run: |
+          java -cp "lib/*:out/main" App &
+          echo $! > app.pid
+
+      - name: Esperar a que la app esté lista
+        run: |
+          for i in $(seq 1 15); do
+            if curl -sf http://localhost:8080/api/health/; then
+              echo "App lista"
+              exit 0
+            fi
+            echo "Intento $i - esperando..."
+            sleep 2
+          done
+          echo "La app no respondió a tiempo"
+          exit 1
+
       - name: Ejecutar tests
         run: |
           java -jar lib/junit-platform-console-standalone-1.10.3.jar \
@@ -46,3 +83,6 @@ jobs:
             --scan-class-path \
             --fail-if-no-tests
 
+      - name: Detener la app
+        if: always()
+        run: kill $(cat app.pid) || true
