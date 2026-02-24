@@ -90,3 +90,8 @@ jobs:
       - name: Detener la app
         if: always()
         run: kill $(cat app.pid) || true
+
+      - name: Desplegar en Render
+        if: success()
+        run: |
+          curl -X POST https://api.render.com/deploy/srv-d64peua4d50c73el1750?key=RypgWvDR_eY
