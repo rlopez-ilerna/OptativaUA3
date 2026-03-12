@@ -1,0 +1,16 @@
+{
+  "name": "todo-java Dev Container",
+  "dockerComposeFile": "../todo-java/docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/app",
+  "forwardPorts": [8080],
+  "postAttachCommand": "echo '✅ Contenedor listo'",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "redhat.java"
+      ]
+    }
+  }
+}

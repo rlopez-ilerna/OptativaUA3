@@ -91,6 +91,13 @@ jobs:
         if: always()
         run: kill $(cat app.pid) || true
 
+  deploy:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    needs: test  # este job solo se ejecuta si 'test' pasa
+    if: github.ref == 'refs/heads/main'
+
+    steps:
       - name: Desplegar en Render
         if: success()
         run: |

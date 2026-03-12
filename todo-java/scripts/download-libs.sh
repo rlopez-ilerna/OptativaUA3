@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# set -euo pipefail
 
 # Descarga librerías (JARs) en ./lib
 # - postgresql JDBC: necesario para conectar con Postgres
