@@ -1,0 +1,10 @@
+src/test/java/HealthEndpointTest.java
+src/test/java/domain/TaskTest.java
+src/test/java/service/TitleRulesTest.java
+src/test/java/service/PriorityRulesTest.java
+src/test/java/service/TagRulesTest.java
+src/test/java/service/TaskStatsServiceTest.java
+src/test/java/CreateTaskEndpointTest.java
+src/test/java/ListTasksEndpointTest.java
+src/test/java/StatsEndpointTest.java
+
